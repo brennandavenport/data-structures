@@ -1,0 +1,32 @@
+BasedOnStyle: LLVM
+Language: Cpp
+
+# Indentation & Alignment
+IndentWidth: 4
+AccessModifierOffset: -4
+TabWidth: 4
+UseTab: Never
+ColumnLimit: 100
+
+# Braces & Formatting
+BreakConstructorInitializers: BeforeComma
+BreakTemplateDeclarations: Yes
+BreakBeforeBraces: Attach
+AllowShortFunctionsOnASingleLine: Inline
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+Cpp11BracedListStyle: false
+
+# Modern C++ Pointer & Reference Placement
+PointerAlignment: Left  # e.g., int* x; instead of int *x;
+
+# Includes Organization
+SortIncludes: CaseSensitive
+IncludeBlocks: Regroup
+
+# C++ Space Rules
+SpaceBeforeParens: ControlStatements
+SpacesInParentheses: false
+SpaceAfterCStyleCast: false
+SpacesInSquareBrackets: false
+SpaceInEmptyParentheses: false

@@ -173,10 +173,21 @@ TEST(VectorTests, ConstructsWithParamValue) {
     bd::vector<int> vec(10, 5);
     std::vector<int> stdVec(10, 5);
 
-    EXPECT_EQ(stdVec.capacity(), vec.capacity());
-    EXPECT_EQ(stdVec.size(), vec.size());
-    EXPECT_EQ(stdVec[3], vec[3]);
+    ASSERT_EQ(stdVec.capacity(), vec.capacity());
+    ASSERT_EQ(stdVec.size(), vec.size());
+    ASSERT_EQ(stdVec[3], vec[3]);
 
     vec.push_back(10);
     EXPECT_EQ(20, vec.capacity());
+}
+
+TEST(VectorTests, ConstructWithInitalizerList) {
+    bd::vector<int> vec{ 1, 2, 3 };
+    bd::vector<std::string> svec{ "Vikas", "is", "a", "toilet" };
+
+    EXPECT_EQ(3, vec.size());
+    EXPECT_EQ(4, svec.size());
+
+    ASSERT_EQ(vec[0], 1);
+    ASSERT_EQ(svec[0], "Vikas");
 }

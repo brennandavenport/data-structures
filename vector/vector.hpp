@@ -1,8 +1,9 @@
 #pragma once
 
+#include <compare>
 #include <cstddef>
 #include <initializer_list>
-#include <new>
+#include <memory>
 #include <utility>
 
 namespace bd {
@@ -15,25 +16,32 @@ public:
     explicit vector(std::size_t size)
         : m_size{ size }
         , m_capacity{ size } {
-        m_data = static_cast<T*>(::operator new(m_capacity * sizeof(T)));
-
-        for (std::size_t i{}; i < m_size; ++i) {
-            ::new (m_data + i) T();
-        }
+        m_data = std::make_unique<T[]>(m_capacity);
     }
 
     explicit vector(std::size_t size, const T& value)
         : m_size{ size }
         , m_capacity{ size } {
 
-        m_data = static_cast<T*>(::operator new(m_capacity * sizeof(T)));
+        m_data = std::make_unique<T[]>(m_capacity);
 
-        for (std::size_t i; i < m_size; ++i) {
-            ::new (m_data + i) T{ value };
+        for (std::size_t i{ 0uz }; i < m_size; ++i) {
+            m_data[i] = T(value);
         }
     }
 
-    vector(std::initializer_list<T>);
+    vector(std::initializer_list<T> list)
+        : m_size{ list.size() }
+        , m_capacity{ list.size() } {
+
+        m_data = std::make_unique<T[]>(m_capacity);
+
+        std::size_t i{ 0uz };
+        for (auto it = list.begin(); it != list.end(); it++) {
+            m_data[i] = std::move(*it);
+            i++;
+        }
+    }
 
     // rule of five
     // copy
@@ -44,10 +52,7 @@ public:
     // vector(my::vector<T>&& other);
     // my::vector<T>& operator=(my::vector<T>&& other);
 
-    ~vector() {
-        clear();
-        ::operator delete(m_data);
-    }
+    ~vector() {}
 
     // element access
     const T& operator[](std::size_t idx) const { return m_data[idx]; }
@@ -59,8 +64,8 @@ public:
     const T& back() const { return m_data[m_size - 1]; }
     T& back() { return m_data[m_size - 1]; }
 
-    const T* data() const { return m_data; }
-    T* data() { return m_data; }
+    const T* data() const { return m_data.get(); }
+    T* data() { return m_data.get(); }
 
     // capacity
     [[nodiscard]] bool empty() const { return m_size == 0; }
@@ -86,10 +91,7 @@ public:
         if (m_size == 0)
             return;
 
-        for (std::size_t i{}; i < m_size; ++i) {
-            m_data[i].~T();
-        }
-
+        m_data = std::make_unique<T[]>(m_capacity);
         m_size = 0;
     }
 
@@ -104,7 +106,7 @@ public:
             realloc(new_capacity);
         }
         // placement new
-        ::new (m_data + m_size) T(value);
+        m_data[m_size] = T(value);
         ++m_size;
     }
 
@@ -113,7 +115,6 @@ public:
             return;
 
         --m_size;
-        m_data[m_size].~T();
     }
 
     void resize(std::size_t new_size) {
@@ -133,23 +134,17 @@ public:
 
 private:
     void realloc(std::size_t new_capacity) {
-        T* old_data = m_data;
-        m_data = static_cast<T*>(::operator new(new_capacity * sizeof(T)));
+        std::unique_ptr<T[]> new_data = std::make_unique<T[]>(new_capacity);
 
         for (std::size_t i{}; i < m_size; ++i) {
-            // unitilized bytes
-            // m_data[i] = std::move(old_data[i]);
-            // cast back to void* call move constructor on type T
-            // if move fails default to copy
-            ::new (m_data + i) T(std::move(old_data[i]));
-            old_data[i].~T();
+            new_data[i] = std::move(m_data[i]);
         }
         m_capacity = new_capacity;
-        ::operator delete(old_data);
+        m_data = std::move(new_data);
     }
 
 private:
-    T* m_data{ nullptr };
+    std::unique_ptr<T[]> m_data{ nullptr };
     std::size_t m_size{ 0 };
     std::size_t m_capacity{ 0 };
     static constexpr std::size_t BASE_CAPACITY{ 2 };
@@ -157,3 +152,7 @@ private:
 };
 
 }; // namespace bd
+
+template <typename T>
+auto operator<=>(const bd::vector<T> lhs, const bd::vector<T> rhs) = default;
+// TODO - implement compare

@@ -191,3 +191,23 @@ TEST(VectorTests, ConstructWithInitalizerList) {
     ASSERT_EQ(vec[0], 1);
     ASSERT_EQ(svec[0], "Vikas");
 }
+
+TEST(VectorTests, CompareOperators) {
+    bd::vector<int> a{ 1, 2, 3 };
+    bd::vector<int> b{ 1, 2, 3 };
+    bd::vector<int> c{ 1, 2, 4 };
+    bd::vector<int> d{ 1, 2 };
+    bd::vector<int> e{};
+
+    // equality
+    ASSERT_TRUE(a == b);
+    ASSERT_TRUE(a != c);
+    ASSERT_TRUE(a != d);
+
+    // lexicographic ordering
+    ASSERT_TRUE(a < c);
+    ASSERT_TRUE(d < a);
+    ASSERT_TRUE(e < d);
+    ASSERT_TRUE(!(a < b) && !(b < a));
+    ASSERT_TRUE(c > a && a <= b && a >= b);
+}

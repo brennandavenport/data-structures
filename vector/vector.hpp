@@ -1,6 +1,6 @@
 #pragma once
 
-#include <compare>
+#include <cassert>
 #include <cstddef>
 #include <initializer_list>
 #include <memory>
@@ -151,8 +151,61 @@ private:
     static constexpr std::size_t CAPACITY_MULT{ 2 };
 };
 
-}; // namespace bd
+template <typename T>
+bool operator==(const vector<T>& lhs, const vector<T>& rhs) {
+    if (lhs.size() == rhs.size()) {
+        for (std::size_t i{ 0uz }; i < lhs.size(); i++) {
+            if (lhs[i] != rhs[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
+    return false;
+}
 
 template <typename T>
-auto operator<=>(const bd::vector<T> lhs, const bd::vector<T> rhs) = default;
-// TODO - implement compare
+bool operator!=(const vector<T>& lhs, const vector<T>& rhs) {
+    if (lhs.size() == rhs.size()) {
+        for (std::size_t i{ 0uz }; i < lhs.size(); i++) {
+            if (lhs[i] != rhs[i]) {
+                return true;
+            }
+        }
+        return false;
+    }
+    return true;
+}
+
+template <typename T>
+bool operator<(const vector<T>& lhs, const vector<T>& rhs) {
+    if (lhs.size() == rhs.size()) {
+        for (std::size_t i{ 0uz }; i < lhs.size(); i++) {
+            if (lhs[i] < rhs[i]) {
+                return true;
+            }
+        }
+        return false;
+
+    } else {
+        return lhs.size() < rhs.size();
+    }
+}
+
+template <typename T>
+bool operator<=(const vector<T>& lhs, const vector<T>& rhs) {
+    return lhs == rhs || lhs < rhs;
+}
+
+template <typename T>
+bool operator>(const vector<T>& lhs, const vector<T>& rhs) {
+    // if lhs is not less than rhs then it must be lhs >= rhs
+    return !(lhs < rhs) && lhs != rhs;
+}
+
+template <typename T>
+bool operator>=(const vector<T>& lhs, const vector<T>& rhs) {
+    return !(lhs < rhs);
+}
+
+}; // namespace bd

@@ -1,2 +1,2 @@
-# Checks: 'bugprone-*,performance-*,readability-*,modernize-*'
+#Checks: 'bugprone-*,performance-*,readability-*,modernize-*'
 # WarningsAsErrors: ''

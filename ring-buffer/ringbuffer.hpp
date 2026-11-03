@@ -89,6 +89,6 @@ void bd::ringbuffer<T, N>::clear() {
     m_data = std::make_unique<T[]>(N);
     m_empty = true;
     m_full = false;
-    m_head = 0uz;
-    m_tail = 0uz;
+    m_head = 0UZ;
+    m_tail = 0UZ;
 }

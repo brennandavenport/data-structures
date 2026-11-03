@@ -36,7 +36,7 @@ public:
 
         m_data = std::make_unique<T[]>(m_capacity);
 
-        std::size_t i{ 0uz };
+        std::size_t i{ 0UZ };
         for (auto it = list.begin(); it != list.end(); it++) {
             m_data[i] = std::move(*it);
             i++;
@@ -52,7 +52,7 @@ public:
     // vector(my::vector<T>&& other);
     // my::vector<T>& operator=(my::vector<T>&& other);
 
-    ~vector() {}
+    ~vector() = default;
 
     // element access
     const T& operator[](std::size_t idx) const { return m_data[idx]; }
